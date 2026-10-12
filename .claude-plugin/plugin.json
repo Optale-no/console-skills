@@ -1,0 +1,11 @@
+{
+  "name": "optale",
+  "description": "Agent Skills for working in an Optale Console through the hosted Optale MCP server: discovery, reads, Objects and Relationships, saved Functions, the Wiki and files.",
+  "author": {
+    "name": "Optale AS"
+  },
+  "homepage": "https://github.com/Optale-no/console-skills",
+  "repository": "https://github.com/Optale-no/console-skills",
+  "license": "MIT",
+  "keywords": ["optale", "mcp", "ontology", "wiki", "agent-skills"]
+}
