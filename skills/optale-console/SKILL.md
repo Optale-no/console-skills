@@ -13,6 +13,7 @@ The Optale Console is a company's shared workspace. It holds:
 - **The Wiki**: Markdown pages in folders, with Git history.
 - **Files**: stored bytes that can be placed in Wiki folders or attached to Objects.
 - **Functions**: saved queries over Objects and saved actions that chain tool calls.
+- **Apps**: the tools people open from the Apps tab to work with the Objects, such as a CRM. Each App has screens, statuses and actions.
 
 You reach all of it through the hosted Optale MCP server. Every call runs as the person who created the connection key and sees only what that person can see.
 
@@ -29,6 +30,7 @@ Every Console has its own ontology. Never assume a type, a Property key or a Rel
 1. `object_definition_list` without arguments: every Object type with its slug, label, description and Property keys.
 2. `object_definition_list` with `objectSlug`: one type in full, including Property types, options, which Properties are required and which are computed.
 3. `relationship_definition_list`: Relationship types, the Object types each one joins, direction and cardinality.
+4. `installed_app_list`: the Apps people use to work with these Objects. `installed_app_get` shows one App's screens, statuses and actions (pass `actionId` for an action's inputs). The business meaning of the types still comes from the definitions.
 
 Your client may already show the tenant's type slugs and writable Properties inside the tool schemas. The definitions are still where descriptions, options and meaning live. Read them before you write.
 
@@ -45,6 +47,27 @@ Before you state a count, a ranking, "all" or "none", keep calling with `cursor`
 A failed call returns `isError: true` with `{"error": {"code", "message", "status", "details"}}`. Codes start with `OPTALE_` (file tools also use short codes such as `FILE_IN_USE`). The message and `details` name what to change. Fix that and call again once.
 
 Calling the same tool with the same arguments after it failed is refused with `OPTALE_MCP_REPEATED_FAILED_CALL` and the earlier failure; change the arguments instead. A timeout on a write may still have written: read the target back before you retry. See `references/errors.md`.
+
+## Remember this Console
+
+No training data covers this Console; it is learned by working in it. If your client keeps a standing instructions file such as `AGENTS.md` or `CLAUDE.md`, keep a short Optale section there and update it as you work:
+
+- the main Object types and what they are for
+- saved Functions that answer recurring questions
+- the Apps people use and what each is for
+- where Wiki content lives
+- conventions the user teaches you
+
+Record names and pointers, never copies of data. Definitions change, so re-check an entry against `object_definition_list` or `function_list` when it matters.
+
+```markdown
+## Optale Console
+- Types: `customer` (accounts we sell to), `contract` (signed agreements, linked to customer by `has-contract`).
+- Saved queries: `open-deals-by-owner` (argument: owner), `contracts-expiring` (argument: days).
+- Apps: `Sales CRM` (pipeline and accounts), `Contract Desk` (renewals).
+- Wiki: account notes under `customers/<name>/`; policies under `policies/`.
+- Conventions: "active" means state in-progress or blocked; set `owner` on every new deal.
+```
 
 ## Which skill next
 
