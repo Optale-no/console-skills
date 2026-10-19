@@ -20,12 +20,12 @@ Paths are relative to the Wiki root, such as `projects/launch/plan.md`. `scope` 
 
 Read before you write, and keep the `revision` you read.
 
-| Change | Tool |
-| --- | --- |
-| Add text at the end | `wiki_patch` with `operation: "append"` and `content` |
-| Replace one exact passage | `wiki_patch` with `operation: "replace_text"`, `oldText` (must occur exactly once) and `newText` |
-| Replace one section under a heading | `wiki_patch` with `operation: "replace_section"`, `heading` and `content` |
-| Create a page, or rewrite most of one | `wiki_write` with `path`, `content` and optional `frontmatter` |
+| Change                                | Tool                                                                                             |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Add text at the end                   | `wiki_patch` with `operation: "append"` and `content`                                            |
+| Replace one exact passage             | `wiki_patch` with `operation: "replace_text"`, `oldText` (must occur exactly once) and `newText` |
+| Replace one section under a heading   | `wiki_patch` with `operation: "replace_section"`, `heading` and `content`                        |
+| Create a page, or rewrite most of one | `wiki_write` with `path`, `content` and optional `frontmatter`                                   |
 
 - `wiki_patch` requires `expectedRevision`: the `revision` from `wiki_read`. It changes only the bytes you name and leaves frontmatter alone. Prefer it for small edits to long pages.
 - `wiki_write` replaces the whole page. When the page exists, pass `expectedRevision`. Use `page.content` from `wiki_read` as your starting text so you do not write the frontmatter into the body.
@@ -58,3 +58,6 @@ Read an Object's own Properties with `object_read`, not `wiki_read`.
 
 - `wiki_html_write` places one durable HTML document (an interactive report, a briefing) in a Wiki folder next to the pages it belongs with.
 - For images, PDFs and other files in a Wiki folder, use `file_place` (see `optale-files`).
+- Images and files uploaded inside a page live beside its Markdown file in `<page>.md.assets/`. Folder pages use `<folder>/index.md.assets/`. The page tree hides these folders. `wiki_list` can list them by path; `file_get`, `file_read_bytes` and `wiki_read` can still read the files. The page body uses stable native File URLs.
+- Moving or renaming a leaf page moves its assets folder and file placements, including a move to another Space. The page's legacy path links become stable File URLs during the move. Deleting the page removes its placements and assets folder permanently; Git restore cannot revive a permanently deleted page. Restoring a non-deleted page from history restores its companion assets from that revision. Files uploaded directly to a Wiki folder stay ordinary file entries.
+- The Wiki file viewer keeps metadata under its information button. "Create page from this" creates and opens a page beside the file, with an image or a link to the original file.
