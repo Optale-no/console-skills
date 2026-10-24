@@ -16,7 +16,8 @@ A file is stored once and identified by a locator: `{"kind": "file", "file_id": 
 
 ## Read a file
 
-- `file_view` shows images and PDF pages to you as images, and returns PDF text where it exists. It is the first choice for scans, screenshots and photos of documents. Use `pages` (one-based) for specific PDF pages. Images need a model that can see.
+- `file_view` reads a file to you. A PDF comes back as text by physical page (`### Page N`, first page = 1): cite a passage by that page number. Read a long PDF in ranges with `fromPage` and `toPage`; a read stops at the view limit and names the next `fromPage`. Pages without a text layer (scans, drawings) are shown to a model that can see, otherwise read by OCR. `images: true` shows up to 10 PDF pages as images for layout. Word and spreadsheet files return their text (`offset` continues a long one). Images and screenshots need a model that can see.
+- A PDF page larger than the 60 KiB text budget returns a continuation with the same `fromPage` and a character `offset` within that page. Follow both values to read its remainder before advancing to the next page. Keep `revision` unchanged when reading a historical file.
 - `file_read_bytes` returns up to 10 MiB as base64, for files you process yourself. `revision` reads an earlier version.
 
 ## Store bytes you have

@@ -34,7 +34,9 @@ Run the same duplicate search first when the Console may already hold the Object
 
 Call `object_update` with `objectId` and only the Properties you are changing. Properties you leave out stay as they are.
 
-A single-value Property holds one value, so writing it replaces the current value in the same call. The response then lists `replacedValues`: for each Property, the old value, the new value and `restoreFrom`, the Object history event (or Shared Value revision) that holds the old value. Tell the user what was replaced.
+A single-value Property holds one value, so writing it replaces the current value in the same call. The response lists `replacedValues`: each entry keeps the complete `previous.value` and an `undo` call, such as `object_update {"objectId":"…","properties":{"icp":"Low"}}`. Use that call to undo only that Property; other Properties stay unchanged. The event id is provenance, not an undo argument. Tell the user what was replaced.
+
+An empty previous value is returned as `previous.value: null`; its undo clears only that Property with null. If the declared lifecycle forbids reverting to the previous state, `undo` explains that a direct revert is not allowed instead of suggesting a failing call.
 
 To attach a file to a file Property, use `file_place` (see `optale-files`). To give an Object a Wiki page, see `optale-wiki`.
 
