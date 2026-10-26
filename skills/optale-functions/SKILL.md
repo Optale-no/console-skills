@@ -32,6 +32,8 @@ Always execute the head revision unless the user asks for an older one. An older
 
 If the connection lists `query_execute`, it runs a saved query by name in one step: `definition: {name}` plus `arguments`, then `mode: "continue"` with `cursor` for the next page.
 
+Save a named query with `function_save`, `kind: "query"`, `name`, `definition: {query}` and `expectedRevision: 0`. Saving accepts the same query defaults as inline `query_execute`: omitted `version`, `parameters`, `page` and `options` are filled in before validation and stored in the saved definition.
+
 ## Run an action
 
 Read the action with `function_read` first, so you know which tools its steps call and which arguments it needs. Then call `function_execute` with its `id`, `revision` and `arguments`.
@@ -56,6 +58,8 @@ Saving a Function binds it to the current definitions. When only the surrounding
 1. `function_read` the Function without `revision` to get the head definition and revision.
 2. `function_save` with the same `id`, `kind`, `name`, `description` and `definition`, and `expectedRevision` set to that head revision.
 3. `function_execute` the new revision the save returns.
+
+An unchanged query Function keeps its revision when its definition, description and pinned dependencies still match. Query input aliases and omitted defaults normalize before saving. Ontology migration `resave-functions` steps use that same normalization to recognize an already-applied save, so rerunning a step does not write another revision. Different content or description still refuses a stale revision.
 
 If the save is refused because the definition no longer fits (a Property was removed or renamed), the definition itself has to change. Fix the paths the error names against the current `object_definition_list` and save again.
 

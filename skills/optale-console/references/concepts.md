@@ -26,7 +26,7 @@ Background for every Optale skill. Load the part you need.
 Writes are guarded by revisions so two writers do not silently overwrite each other.
 
 - **Objects** record every change as a history event. `object_update` answers with `replacedValues`, each naming the old value and the event to restore it from.
-- **Wiki pages** have a `revision` (a content checksum) and Git commits. Pass the revision you read as `expectedRevision` when you write; a stale one is refused.
+- **Wiki documents** have immutable database revisions and a content checksum. `revisionId` comes from `wiki_history`; `page.revision` is only for `expectedRevision` when writing. All history follows the document's current Space access.
 - **Files** have numbered revisions. `expectedRevision` works the same way.
 - **Functions** have integer revisions. You execute an exact revision; a save names the revision it replaces.
 
