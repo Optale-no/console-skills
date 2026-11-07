@@ -51,3 +51,21 @@ A file is stored once. It can be **placed** in one or more Wiki folders and **at
 ## Functions
 
 A **query Function** is a saved, typed query over Objects with declared parameters and a fixed result schema. An **action Function** is a saved chain of tool calls. Both pin the definitions they depend on. When the ontology changes under a Function, executing it can be refused until a new revision is saved.
+
+## Chats and groups
+
+`chat_list` pages through the caller's chats with titles, recent activity, group IDs, settled status and short previews. Use it to propose a grouping without making changes. `chat_project_search` finds groups by name and returns their `projectId`.
+
+`chat_manage` applies one operation to an `items` array. `group_save` creates a group with `name` when `projectId` is null or omitted; an existing native id updates it. A blank id is refused: pass null to create. On update, null `name` or `description` preserves the existing value; an empty description clears it. `assign` moves each `conversationId` to a `projectId`; use `"unassigned"` or null to move a chat out of its group without removing the group or the chat.
+
+For chats, use `rename` with `title`, `settle` or `unsettle`, `archive` or `unarchive`, `duplicate`, and `mark_read`. Groups have `group_settle` and `group_unsettle`. `reorder` changes a sidebar section's sort and row order. Pins have been retired; Active and Settled are the current lifecycle.
+
+`share_create` uses `conversationId`. `share_update` and `share_revoke` accept either `conversationId` or `shareId`. Updating rotates the share ID and URL; use the returned URL, not the previous one. `snapshotFiles` has the same meaning as the UI's share-files choice.
+
+`export` uses `conversationId` and `format` (`text`, `markdown`, `json` or `csv`) and delivers a File with its locator and attachment card. `filename`, `includeOptions`, `exportBranches` and `recursive` match the UI export options. Headless export follows the UI-default newest-sibling branch; the browser export uses the person's current sibling selection. PNG remains a UI-only screenshot of the rendered page.
+
+`import` reads an accessible File by `file_id` through the same native JSON importers as the UI upload: LibreChat, ChatGPT, Claude and ChatbotUI. Its result names the source File and revision and confirms completion.
+
+`fork` uses `conversationId` and `targetMessageId`. `forkOption` is `directPath`, `includeBranches` or `targetLevel` (the default), matching the UI's three choices. `splitAtTarget` starts at the selected message level; optional `latestMessageId` supplies the branch tip, otherwise the headless UI-default tip is used.
+
+Up to 50 items share one Activity. Assignment batches are atomic; content operations retain their native UI execution boundaries with journaled receipts. Known input or target refusals are reported per item; unexpected errors stop the unit. Repeated group-create names in one call reuse the first group, and a same-key retry replays committed identities rather than creating again. These writes use the session's Auto or Read Only mode, without another confirmation step.

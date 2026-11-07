@@ -20,6 +20,12 @@ A file is stored once and identified by a locator: `{"kind": "file", "file_id": 
 - A PDF page larger than the 60 KiB text budget returns a continuation with the same `fromPage` and a character `offset` within that page. Follow both values to read its remainder before advancing to the next page. Keep `revision` unchanged when reading a historical file.
 - `file_read_bytes` returns up to 10 MiB as base64, for files you process yourself. `revision` reads an earlier version.
 
+## Fill a PDF form
+
+Use `pdf_form_inspect` with the File `locator` to get exact field names, types, current values, options, pages and positions. Fill an AcroForm with `pdf_form_fill`, using the same locator and a `values` map keyed by those field names. Text takes strings, checkboxes take booleans, and choice fields take their option strings or arrays. The server preserves the PDF pages and delivers a new File with a locator, attachment card and read-back values. The source stays unchanged.
+
+Keep the output editable unless the user requests a flattened form, then set `flatten: true`. To verify an editable output, call `pdf_form_inspect` on its returned locator. These operations handle PDF bytes on the server, including embedded-font appearances for Norwegian characters. Do not rebuild a fillable form as images or use sandbox library probes when these operations are available. Hybrid PDFs use their AcroForm fields and report removal of the alternate XFA representation. XFA-only or encrypted PDFs need a valid AcroForm copy.
+
 ## Store bytes you have
 
 `file_place` with `contentBase64` writes a whole file. Encode the bytes as canonical base64; the cap is 10 MiB per file.
@@ -49,3 +55,7 @@ The response lists `replacedValues` when an Object's Property value was replaced
 ## The Console's code workspace
 
 `file_import_workspace` copies a stored file into the Console's code workspace so code running there can read it; wait for its result before using the path. `file_export_workspace` turns a file that code produced there into a durable file, optionally placed in a Wiki folder. Both take a code workspace `session_id`. An agent working on its own machine does not need them: read bytes with `file_read_bytes` and store them with `file_place`.
+
+Scratch import is a read and works in both Auto and Read Only modes. It creates no stored File, placement or Activity entry. Export creates a durable file and still requires Auto mode.
+
+Within the same chat, an imported scratch path remains available in later turns, including after a page reload. You do not need to run code in the import turn or re-import solely because a new turn started. A different chat has its own workspace. Scratch storage is not durable storage: export a file when it must be kept.
