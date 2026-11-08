@@ -38,18 +38,20 @@ Save a named query with `function_save`, `kind: "query"`, `name`, `definition: {
 
 Read the action with `function_read` first, so you know which tools its steps call and which arguments it needs. Then call `function_execute` with its `id`, `revision` and `arguments`.
 
+One request can need several saved actions. Read and execute each matching Function for its part of the request rather than replacing the remaining Functions with direct writes. Completing one Function completes only the work that its result reports.
+
 - Each step is a real tool call, checked as if you had called it yourself.
 - The run stops at the first failed step and never rolls back. Steps that ran stay done.
 - The result reports `status`, every step with `succeeded`, `failed` or `not_run`, and a `summary`. Report which steps ran and which did not.
 
 ## When a Function refuses
 
-| Code | What happened | Do this |
-| --- | --- | --- |
-| `OPTALE_FUNCTION_DEPENDENCY_CHANGED` | A Property, type or tool the Function was saved against changed. Nothing ran. | Repair below. |
-| `OPTALE_FUNCTION_DEPENDENCY_MISSING` | An action step uses a tool this connection cannot run. Nothing ran. | Tell the user which tool the connection needs. |
-| `OPTALE_FUNCTION_NOT_FOUND` | Wrong `id`, `name` or `scope`. | List again in the right `scope`. |
-| `OPTALE_FUNCTION_REVISION_REQUIRED` | `revision` was missing or not a positive integer. | Pass the head revision. |
+| Code                                 | What happened                                                                 | Do this                                        |
+| ------------------------------------ | ----------------------------------------------------------------------------- | ---------------------------------------------- |
+| `OPTALE_FUNCTION_DEPENDENCY_CHANGED` | A Property, type or tool the Function was saved against changed. Nothing ran. | Repair below.                                  |
+| `OPTALE_FUNCTION_DEPENDENCY_MISSING` | An action step uses a tool this connection cannot run. Nothing ran.           | Tell the user which tool the connection needs. |
+| `OPTALE_FUNCTION_NOT_FOUND`          | Wrong `id`, `name` or `scope`.                                                | List again in the right `scope`.               |
+| `OPTALE_FUNCTION_REVISION_REQUIRED`  | `revision` was missing or not a positive integer.                             | Pass the head revision.                        |
 
 ## Repair a changed dependency
 
